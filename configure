@@ -3269,8 +3269,8 @@ then
 		;;
 	*)
 		# for now, limit cross builds to known configurations
-		MACHDEP="unknown"
-		as_fn_error $? "cross build not supported for $host" "$LINENO" 5
+        ac_sys_system=Baremetal
+        ;;
 	esac
 	ac_sys_release=
     else
@@ -3314,8 +3314,12 @@ if test "$cross_compiling" = yes; then
 		;;
 	*)
 		# for now, limit cross builds to known configurations
-		MACHDEP="unknown"
-		as_fn_error $? "cross build not supported for $host" "$LINENO" 5
+        case "$host_cpu" in
+            arm*)
+                _host_cpu=arm;;
+            *)
+                _host_cpu=$host_cpu;;
+        esac
 	esac
 	_PYTHON_HOST_PLATFORM="$MACHDEP${_host_cpu:+-$_host_cpu}"
 fi
@@ -5961,7 +5965,10 @@ $as_echo "#define Py_ENABLE_SHARED 1" >>confdefs.h
 	LDLIBRARY='libpython$(LDVERSION).so'
 	RUNSHARED=LIBPATH=`pwd`${LIBPATH:+:${LIBPATH}}
 	;;
-
+    Baremetal*)
+        PY_ENABLE_SHARED=0
+        BLDLIBRARY='$(LIBRARY)'
+        LDLIBRARY='libpython$(LDVERSION).a'
   esac
 else # shared is disabled
   PY_ENABLE_SHARED=0
@@ -9296,6 +9303,9 @@ then
 	CYGWIN*)
 		LDSHARED="gcc -shared -Wl,--enable-auto-image-base"
 		LDCXXSHARED="g++ -shared -Wl,--enable-auto-image-base";;
+    Baremetal*)
+        LDSHARED="gcc -shared"
+        LDCXXSHARED="g++ -shared -wno-rtti -wno-exceptions";;
 	*)	LDSHARED="ld";;
 	esac
 fi
@@ -11400,7 +11410,7 @@ void *x=fsync
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
-$as_echo "#define HAVE_FSYNC 1" >>confdefs.h
+#$as_echo "#define HAVE_FSYNC 1" >>confdefs.h
 
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
@@ -11425,7 +11435,7 @@ void *x=fdatasync
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
-$as_echo "#define HAVE_FDATASYNC 1" >>confdefs.h
+#$as_echo "#define HAVE_FDATASYNC 1" >>confdefs.h
 
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }

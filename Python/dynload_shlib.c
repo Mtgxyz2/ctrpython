@@ -25,7 +25,18 @@
 #else
 #define LEAD_UNDERSCORE ""
 #endif
-
+void* dlopen(const char* fname, int flag) {
+    return NULL;
+}
+char* dlerror() {
+    return "Dynamic loading is not supported.\n";
+}
+void* dlsym(void *handle, const char* symbol) {
+    return NULL;
+}
+int dlclode(void* handle) {
+    return 0;
+}
 /* The .so extension module ABI tag, supplied by the Makefile via
    Makefile.pre.in and configure.  This is used to discriminate between
    incompatible .so files so that extensions for different Python builds can

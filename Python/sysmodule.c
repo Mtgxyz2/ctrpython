@@ -1937,7 +1937,7 @@ _PySys_Init(void)
     crashing the Python interpreter. Catch this common mistake here
     and output a useful error message. Note that under MS Windows,
     the shell already prevents that. */
-#if !defined(MS_WINDOWS)
+#if 0
     {
         struct _Py_stat_struct sb;
         if (_Py_fstat_noraise(fileno(stdin), &sb) == 0 &&
@@ -1970,18 +1970,12 @@ _PySys_Init(void)
     SET_SYS_FROM_STRING("copyright",
                         PyUnicode_FromString(Py_GetCopyright()));
     SET_SYS_FROM_STRING("platform",
-                        PyUnicode_FromString(Py_GetPlatform()));
-    SET_SYS_FROM_STRING("executable",
-                        PyUnicode_FromWideChar(
-                               Py_GetProgramFullPath(), -1));
-    SET_SYS_FROM_STRING("prefix",
-                        PyUnicode_FromWideChar(Py_GetPrefix(), -1));
-    SET_SYS_FROM_STRING("exec_prefix",
-                        PyUnicode_FromWideChar(Py_GetExecPrefix(), -1));
-    SET_SYS_FROM_STRING("base_prefix",
-                        PyUnicode_FromWideChar(Py_GetPrefix(), -1));
-    SET_SYS_FROM_STRING("base_exec_prefix",
-                        PyUnicode_FromWideChar(Py_GetExecPrefix(), -1));
+                        PyUnicode_FromString("Horizon"));
+    SET_SYS_FROM_STRING("executable", PyUnicode_FromString("SDMC:/"));
+    SET_SYS_FROM_STRING("prefix", PyUnicode_FromString("SDMC:/"));
+    SET_SYS_FROM_STRING("exec_prefix",PyUnicode_FromString("SDMC:/"));
+    SET_SYS_FROM_STRING("base_prefix",PyUnicode_FromString("SDMC:/"));
+    SET_SYS_FROM_STRING("base_exec_prefix",PyUnicode_FromString("SDMC:/"));
     SET_SYS_FROM_STRING("maxsize",
                         PyLong_FromSsize_t(PY_SSIZE_T_MAX));
     SET_SYS_FROM_STRING("float_info",

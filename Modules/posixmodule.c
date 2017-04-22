@@ -368,7 +368,7 @@ static int win32_can_symlink = 0;
 #       define STRUCT_STAT struct _Py_stat_struct
 #else
 #       define STAT stat
-#       define LSTAT lstat
+#       define LSTAT stat
 #       define FSTAT fstat
 #       define STRUCT_STAT struct stat
 #endif
@@ -393,7 +393,52 @@ static int win32_can_symlink = 0;
 #define INITFUNC PyInit_posix
 #define MODNAME "posix"
 #endif
-
+pid_t getppid() {
+    return 1;
+}
+int pipe(int pipefd[2]) {
+    errno=EFAULT;
+    return -1;
+}
+mode_t umask(mode_t mask) {
+    return mask;
+}
+char *ttyname(int fd) {
+    errno = ENOTTY;
+    return NULL;
+}
+int fchdir(int fd) {
+    errno = ENOTDIR;
+    return -1;
+}
+uid_t getuid(void) {
+    return 1;
+}
+uid_t geteuid(void) {
+    return 1;
+}
+gid_t getgid(void) {
+    return 1;
+}
+gid_t getegid(void) {
+    return 1;
+}
+int setgroups(int size, const gid_t *list) {
+    errno = EPERM;
+    return -1;
+}
+int chroot(const char* path) {
+    errno = EPERM;
+    return -1;
+}
+int execv(const char* fname, char* const argv[]) {
+    errno = EACCES;
+    return -1;
+}
+int symlink(const char* target, const char* linkpath) {
+    errno = EPERM;
+    return -1;
+}
 #ifdef MS_WINDOWS
 /* defined in fileutils.c */
 PyAPI_FUNC(void) _Py_time_t_to_FILE_TIME(time_t, int, FILETIME *);
@@ -4471,7 +4516,9 @@ utime_nofollow_symlinks(utime_t *ut, const char *path)
 #endif
 
 #ifndef MS_WINDOWS
-
+int utime(const char *f, const utime_t* times) {
+    return 0;
+}
 static int
 utime_default(utime_t *ut, const char *path)
 {
@@ -5555,7 +5602,9 @@ os.sched_yield
 
 Voluntarily relinquish the CPU.
 [clinic start generated code]*/
-
+int sched_yield() {
+    return 0;
+}
 static PyObject *
 os_sched_yield_impl(PyObject *module)
 /*[clinic end generated code: output=902323500f222cac input=e54d6f98189391d4]*/
@@ -6637,7 +6686,7 @@ os.setgroups
 
 Set the groups of the current process to list.
 [clinic start generated code]*/
-
+#define MAX_GROUPS 1
 static PyObject *
 os_setgroups(PyObject *module, PyObject *groups)
 /*[clinic end generated code: output=3fcb32aad58c5ecd input=fa742ca3daf85a7e]*/
@@ -9147,15 +9196,25 @@ os_WSTOPSIG_impl(PyObject *module, int status)
 }
 #endif /* WSTOPSIG */
 #endif /* HAVE_SYS_WAIT_H */
-
-
-#if defined(HAVE_FSTATVFS) && defined(HAVE_SYS_STATVFS_H)
+int fstatvfs(int fd, struct statvfs *buf) {
+    buf->f_bsize = 4096;
+    buf->f_frsize = 4096;
+    buf->f_blocks = 8388608; //Not the correct way to do this
+    buf->f_bfree = 8388607;
+    buf->f_bavail = 8388607;
+    buf->f_files = 1; //No inodes on fat*
+    buf->f_ffree = 1;
+    buf->f_favail = 1;
+    buf->f_fsid = 0;
+    buf->f_flag = ST_NOSUID;
+    buf->f_namemax = 255;
+    return 0;
+}
 #ifdef _SCO_DS
 /* SCO OpenServer 5.0 and later requires _SVID3 before it reveals the
    needed definitions in sys/statvfs.h */
 #define _SVID3
 #endif
-#include <sys/statvfs.h>
 
 static PyObject*
 _pystatvfs_fromstructstatvfs(struct statvfs st) {
@@ -9210,7 +9269,6 @@ Perform an fstatvfs system call on the given fd.
 
 Equivalent to statvfs(fd).
 [clinic start generated code]*/
-
 static PyObject *
 os_fstatvfs_impl(PyObject *module, int fd)
 /*[clinic end generated code: output=53547cf0cc55e6c5 input=d8122243ac50975e]*/
@@ -9230,8 +9288,6 @@ os_fstatvfs_impl(PyObject *module, int fd)
 
     return _pystatvfs_fromstructstatvfs(st);
 }
-#endif /* defined(HAVE_FSTATVFS) && defined(HAVE_SYS_STATVFS_H) */
-
 
 #if defined(HAVE_STATVFS) && defined(HAVE_SYS_STATVFS_H)
 #include <sys/statvfs.h>

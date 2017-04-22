@@ -2,7 +2,11 @@
 #ifdef MS_WINDOWS
 #include <windows.h>
 #endif
-
+#undef HAVE_CLOCK_GETTIME
+#define HAVE_CLOCK_GETTIME 1
+int clock_getres(clockid_t clk_id, struct timespec *res);
+int clock_gettime(clockid_t clk_id, struct timespec *res);
+int clock_settime(clockid_t clk_id, struct timespec *res);
 #if defined(__APPLE__)
 #include <mach/mach_time.h>   /* mach_absolute_time(), mach_timebase_info() */
 #endif
@@ -629,7 +633,23 @@ _PyTime_GetSystemClockWithInfo(_PyTime_t *t, _Py_clock_info_t *info)
 {
     return pygettimeofday(t, info, 1);
 }
-
+int clock_getres(clockid_t clk_id, struct timespec *res) {
+    res->tv_sec=1;
+    res->tv_nsec=0;
+    return 0;
+}
+static long curr_nsecs_hack=0;
+int clock_gettime(clockid_t clk_id, struct timespec *tp) {
+    time(&(tp->tv_sec));
+    tp->tv_nsec=curr_nsecs_hack;
+    curr_nsecs_hack++;
+    return 0;
+}
+int clock_settime(clockid_t clk_id, struct timespec *tp) {
+    errno = EPERM; //Setting clocktime on 3ds requires access to mcu::RTC, which is currently unsupported in libctru. Also this would break monotonic
+    return -1;
+}
+#define CLOCK_MONOTONIC (clockid_t)4
 static int
 pymonotonic(_PyTime_t *tp, _Py_clock_info_t *info, int raise)
 {

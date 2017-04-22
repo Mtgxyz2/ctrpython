@@ -409,7 +409,7 @@ _Py_InitializeEx_Private(int install_sigs, int install_importlib)
         Py_FatalError("Py_Initialize: can't initialize sys dict");
     Py_INCREF(interp->sysdict);
     _PyImport_FixupBuiltin(sysmod, "sys");
-    PySys_SetPath(Py_GetPath());
+    PySys_SetPath("");
     PyDict_SetItemString(interp->sysdict, "modules",
                          interp->modules);
 

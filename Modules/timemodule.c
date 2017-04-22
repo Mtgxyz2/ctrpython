@@ -1441,7 +1441,7 @@ pysleep(_PyTime_t secs)
             return -1;
 
         Py_BEGIN_ALLOW_THREADS
-        err = select(0, (fd_set *)0, (fd_set *)0, (fd_set *)0, &timeout);
+        for(int i=timeout.tv_sec*100;i;i--);
         Py_END_ALLOW_THREADS
 
         if (err == 0)

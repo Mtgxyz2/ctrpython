@@ -7,11 +7,34 @@
 #include <pwd.h>
 
 #include "clinic/pwdmodule.c.h"
+#include <errno.h>
 /*[clinic input]
 module pwd
 [clinic start generated code]*/
 /*[clinic end generated code: output=da39a3ee5e6b4b0d input=60f628ef356b97b6]*/
-
+struct passwd rootusr = {
+    "root",
+    "hunter1",
+    1,
+    1,
+    "Charlie Root",
+    "SDMC:/",
+    "SDMC:/false"
+};
+struct passwd *getpwnam(const char *name) {
+    if(strcmp(name, "root")) {
+        errno=ENOENT;
+        return NULL;
+    }
+    return &rootusr;
+}
+struct passwd *getpwuid(uid_t uid) {
+    if(uid != 1) {
+        errno=ENOENT;
+        return NULL;
+    }
+    return &rootusr;
+}
 static PyStructSequence_Field struct_pwd_type_fields[] = {
     {"pw_name", "user name"},
     {"pw_passwd", "password"},
