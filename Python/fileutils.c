@@ -758,7 +758,7 @@ get_inheritable(int fd, int raise)
 #else
     int flags;
 
-    flags = fcntl(fd, F_GETFD, 0);
+    flags = 0;
     if (flags == -1) {
         if (raise)
             PyErr_SetFromErrno(PyExc_OSError);
@@ -867,7 +867,8 @@ set_inheritable(int fd, int inheritable, int raise, int *atomic_flag_works)
 #endif
 
     /* slow-path: fcntl() requires two syscalls */
-    flags = fcntl(fd, F_GETFD);
+//    flags = fcntl(fd, F_GETFD);
+    flags = inheritable?0:FD_CLOEXEC;
     if (flags < 0) {
         if (raise)
             PyErr_SetFromErrno(PyExc_OSError);
@@ -886,7 +887,8 @@ set_inheritable(int fd, int inheritable, int raise, int *atomic_flag_works)
         return 0;
     }
 
-    res = fcntl(fd, F_SETFD, new_flags);
+//    res = fcntl(fd, F_SETFD, new_flags);
+    res = 0;
     if (res < 0) {
         if (raise)
             PyErr_SetFromErrno(PyExc_OSError);

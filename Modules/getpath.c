@@ -462,7 +462,7 @@ calculate_path(void)
 
     static const wchar_t delimiter[2] = {DELIM, '\0'};
     static const wchar_t separator[2] = {SEP, '\0'};
-    char *_rtpypath = Py_GETENV("PYTHONPATH"); /* XXX use wide version on Windows */
+    char *_rtpypath = "romfs:/python.zip";//Py_GETENV("PYTHONPATH"); /* XXX use wide version on Windows */
     wchar_t *rtpypath = NULL;
     wchar_t *home = Py_GetPythonHome();
     char *_path = getenv("PATH");

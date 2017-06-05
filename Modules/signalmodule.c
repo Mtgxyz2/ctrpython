@@ -314,7 +314,7 @@ signal_handler(int sig_num)
     /* If the handler was not set up with sigaction, reinstall it.  See
      * Python/pylifecycle.c for the implementation of PyOS_setsig which
      * makes this true.  See also issue8354. */
-    PyOS_setsig(sig_num, signal_handler);
+//    PyOS_setsig(sig_num, signal_handler);
 #endif
 
     /* Issue #10311: asynchronously executing signal handlers should not

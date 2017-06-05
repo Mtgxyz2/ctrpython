@@ -92,9 +92,12 @@ zipimporter_init(ZipImporter *self, PyObject *args, PyObject *kwds)
     Py_DECREF(path);
     path = tmp;
 #endif
-
-    filename = path;
-    Py_INCREF(filename);
+    if(PyUnicode_GetLength(path)!=1) {
+        filename = path;
+        Py_INCREF(filename);
+    } else {
+        filename = PyUnicode_FromString("romfs:/python.zip");
+    }
     flen = len;
     for (;;) {
         struct stat statbuf;

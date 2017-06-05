@@ -984,7 +984,6 @@ static int
 initfsencoding(PyInterpreterState *interp)
 {
     PyObject *codec;
-
 #ifdef MS_WINDOWS
     if (Py_LegacyWindowsFSEncodingFlag)
     {
@@ -997,16 +996,10 @@ initfsencoding(PyInterpreterState *interp)
         Py_FileSystemDefaultEncodeErrors = "surrogatepass";
     }
 #else
-    if (Py_FileSystemDefaultEncoding == NULL)
-    {
-        Py_FileSystemDefaultEncoding = get_locale_encoding();
-        if (Py_FileSystemDefaultEncoding == NULL)
-            Py_FatalError("Py_Initialize: Unable to get the locale encoding");
-
-        Py_HasFileSystemDefaultEncoding = 0;
-        interp->fscodec_initialized = 1;
-        return 0;
-    }
+    Py_FileSystemDefaultEncoding = "utf-8"; //UTF-8 is the only encoding ™
+    Py_HasFileSystemDefaultEncoding = 0;
+    interp->fscodec_initialized = 1;
+    return 0;
 #endif
 
     /* the encoding is mbcs, utf-8 or ascii */
@@ -1644,6 +1637,7 @@ PyOS_getsig(int sig)
 PyOS_sighandler_t
 PyOS_setsig(int sig, PyOS_sighandler_t handler)
 {
+    return NULL;
 #ifdef HAVE_SIGACTION
     /* Some code in Modules/signalmodule.c depends on sigaction() being
      * used here if HAVE_SIGACTION is defined.  Fix that if this code
