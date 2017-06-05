@@ -1418,7 +1418,7 @@ floattime(_Py_clock_info_t *info)
 /* Implement pysleep() for various platforms.
    When interrupted (or when another error occurs), return -1 and
    set an exception; else return 0. */
-
+void svcSleepThread(long long int ns);
 static int
 pysleep(_PyTime_t secs)
 {
@@ -1441,7 +1441,7 @@ pysleep(_PyTime_t secs)
             return -1;
 
         Py_BEGIN_ALLOW_THREADS
-        for(int i=timeout.tv_sec*100;i;i--);
+        svcSleepThread(1000*((timeout.tv_sec*1000000)+timeout.tv_usec));
         Py_END_ALLOW_THREADS
 
         if (err == 0)

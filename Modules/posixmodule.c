@@ -5602,7 +5602,9 @@ os.sched_yield
 
 Voluntarily relinquish the CPU.
 [clinic start generated code]*/
+void svcSleepThread(long long int ns);
 int sched_yield() {
+    svcSleepThread(0);
     return 0;
 }
 static PyObject *
