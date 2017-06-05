@@ -747,7 +747,7 @@ Py_FinalizeEx(void)
 void
 Py_Finalize(void)
 {
-    Py_FinalizeEx();
+//    Py_FinalizeEx(); //TODO: currently broken and I'm too fed up/lazy to look into this
 }
 
 /* Create and initialize a new interpreter and thread, and return the
